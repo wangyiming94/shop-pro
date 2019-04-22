@@ -5,21 +5,21 @@
         <img src="../assets/img/logo.png" alt="" />
       </div>
 
-      <el-form ref="loginFormRef" :model="loginForm">
-        <el-form-item>
+      <el-form ref="loginFormRef" :model="loginForm" :rules="loginFromRules">
+        <el-form-item prop="username">
           <el-input v-model="loginForm.username">
             <i slot="prefix" class="iconfont icon-user"></i>
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-input v-model="loginForm.userpass">
+        <el-form-item prop="userpass">
+          <el-input v-model="loginForm.userpass" :show-password="true">
             <i slot="prefix" class="iconfont icon-3702mima"></i>
           </el-input>
         </el-form-item>
         <el-row>
           <el-col :push="15">
-            <el-button type="primary">登录</el-button>
-            <el-button type="info">重置</el-button>
+            <el-button type="primary" @click="login()">登录</el-button>
+            <el-button type="info" @click="reset()">重置</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -29,8 +29,37 @@
 
 <script>
 export default {
+  methods: {
+    reset () {
+      this.$refs.loginFormRef.resetFields()
+    },
+    login () {
+      this.$refs.loginFormRef.validate(async valid => {
+        if (valid === true) {
+          const {data: dt} = await this.$http.post('/login', {
+            username: this.loginForm.username,
+            password: this.loginForm.userpass
+          })
+          if (dt.meta.status !== 200) {
+            return this.$message.error(dt.meta.msg)
+          }
+          window.sessionStorage.setItem('token', dt.data.token)
+          this.$router.push('/home')
+        }
+      })
+    }
+  },
   data () {
     return {
+      loginFromRules: {
+        username: [
+          // required:非空  message:错误提示  trigger:触发校验机制
+          { required: true, message: '请输入用户名称', trigger: 'blur' }
+        ],
+        userpass: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ]
+      },
       loginForm: {
         username: '',
         userpass: ''
