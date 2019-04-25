@@ -30,13 +30,13 @@
 <script>
 export default {
   methods: {
-    reset () {
+    reset() {
       this.$refs.loginFormRef.resetFields()
     },
-    login () {
+    login() {
       this.$refs.loginFormRef.validate(async valid => {
         if (valid === true) {
-          const {data: dt} = await this.$http.post('/login', {
+          const { data: dt } = await this.$http.post('/login', {
             username: this.loginForm.username,
             password: this.loginForm.userpass
           })
@@ -49,16 +49,14 @@ export default {
       })
     }
   },
-  data () {
+  data() {
     return {
       loginFromRules: {
         username: [
           // required:非空  message:错误提示  trigger:触发校验机制
           { required: true, message: '请输入用户名称', trigger: 'blur' }
         ],
-        userpass: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ]
+        userpass: [{ required: true, message: '请输入密码', trigger: 'blur' }]
       },
       loginForm: {
         username: '',
